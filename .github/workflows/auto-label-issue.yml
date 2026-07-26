@@ -22,7 +22,7 @@ jobs:
       - name: "Run CLI Command"
         # 核心逻辑：调用 gh issue edit 命令行，指定目标 Issue 的编号，并追加标签
         run: |
-          gh issue edit ${{ github.event.issue.number }} --add-label "triage"
+          gh issue edit ${{ github.event.issue.number }} --add-label "needs-review"
         
         # 环境变量：gh 命令需要凭证来确认身份并获取仓库路径
         env:
