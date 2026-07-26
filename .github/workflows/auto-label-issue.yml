@@ -1,0 +1,32 @@
+name: "Auto Label New Issues"
+
+# 1. 触发器：告诉 GitHub 何时运行这个流水线
+on:
+  issues:
+    # 仅在 Issue 被首次创建（opened）或被重新打开（reopened）时触发
+    types: [opened, reopened] 
+
+# 2. 权限控制（至关重要）
+permissions:
+  # 默认的 GITHUB_TOKEN 只有读取权限
+  # 我们要给 Issue 打标签，因此必须显式申请 'write' 权限
+  issues: write
+
+# 3. 具体执行的任务
+jobs:
+  apply_default_label:
+    name: "Apply Default Label via gh CLI"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: "Run CLI Command"
+        # 核心逻辑：调用 gh issue edit 命令行，指定目标 Issue 的编号，并追加标签
+        run: |
+          gh issue edit ${{ github.event.issue.number }} --add-label "triage"
+        
+        # 环境变量：gh 命令需要凭证来确认身份并获取仓库路径
+        env:
+          # 使用流水线自带的临时密钥
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 自动获取当前触发流水线的仓库路径（例如 yourname/yourrepo）
+          GH_REPO: ${{ github.repository }}
